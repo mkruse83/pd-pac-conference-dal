@@ -1,3 +1,4 @@
+require("aws-xray-sdk");
 const data = require("./data.json");
 
 exports.handler = async (event, context) => {
