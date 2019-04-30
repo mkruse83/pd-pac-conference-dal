@@ -1,1 +1,11 @@
-{}
+{
+    "callbackWaitsForEmptyEventLoop": true,
+    "logGroupName": "/aws/lambda/pd-pac-conference-dal-dev",
+    "logStreamName": "2019/04/30/[$LATEST]a21e44a3132544e9b8b4c50b7987ba06",
+    "functionName": "pd-pac-conference-dal-dev",
+    "memoryLimitInMB": "128",
+    "functionVersion": "$LATEST",
+    "invokeid": "fe54d233-9081-487d-adc5-5acbd0b15fb8",
+    "awsRequestId": "fe54d233-9081-487d-adc5-5acbd0b15fb8",
+    "invokedFunctionArn": "arn:aws:lambda:eu-central-1:736519287593:function:pd-pac-conference-dal-dev"
+}
