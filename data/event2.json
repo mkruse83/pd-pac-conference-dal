@@ -1,0 +1,9 @@
+{
+    "identifier": "addConference",
+    "conference": {
+        "name": "JavaLand",
+        "from": "2017-02-03",
+        "to": "2017-02-05",
+        "topics": ["JVM", "Java"]
+    }
+}

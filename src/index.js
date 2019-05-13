@@ -1,5 +1,13 @@
 require("aws-xray-sdk");
-const data = require("./data.json");
+
+const AddConferenceHandler = require("./handler/AddConferenceHandler");
+const ConferenceHandler = require("./handler/GetConferencesHandler");
+
+const AWS = require('aws-sdk');
+AWS.config.apiVersions = {
+  dynamodb: '2012-08-10',
+};
+
 
 exports.handler = async (event, context) => {
   console.log(
@@ -9,9 +17,16 @@ exports.handler = async (event, context) => {
     JSON.stringify(context, null, 2)
   );
 
-  return {
-    statusCode: 200,
-    headers: {},
-    body: JSON.stringify(data)
-  };
+  const handlers = [
+      new AddConferenceHandler(),
+      new ConferenceHandler(),
+  ];
+
+  const dynamoDb = new AWS.DynamoDB();
+  const foundHandler = handlers.find(handler => handler.canHandle(event, context));
+  if (foundHandler) {
+    return foundHandler.handle(event, context, dynamoDb);
+  }
+  console.log("WARNING:", "could not handle");
+  return {};
 };
