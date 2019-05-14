@@ -1,6 +1,7 @@
 const {ID, SORT, CONF_NAME, CONF_DATE_FROM, CONF_DATE_TO, CONF_TOPICS} = require("../helper/fields");
 const {ADD_CONFERENCE} = require("../helper/methods");
 const {formatToYearAndMonth} = require("../helper/date");
+const dynamoDb = require("./dynamoDB");
 
 class AddConferenceHandler {
 
@@ -8,8 +9,12 @@ class AddConferenceHandler {
         return event.identifier === ADD_CONFERENCE;
     }
 
-    handle(event, context, dynamoDb) {
-        this.validate(event.conference);
+    handle(event) {
+        try {
+            this.validate(event.conference);
+        } catch (e) {
+            return Promise.reject(e);
+        }
         const conference = this.parse(event.conference);
 
         const params = {

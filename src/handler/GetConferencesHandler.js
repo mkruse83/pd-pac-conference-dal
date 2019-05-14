@@ -1,4 +1,5 @@
 const {GET_CONFERENCES} = require("../helper/methods");
+const getConferences = require("../helper/getConferences");
 
 class GetConferencesHandler {
 
@@ -6,42 +7,15 @@ class GetConferencesHandler {
         return event.identifier === GET_CONFERENCES;
     }
 
-    handle(event, context, dynamoDb) {
+    handle(event) {
         const month = event.month;
-        if (month) {
+        try {
             this.validate(month);
+        } catch (e) {
+            return Promise.reject(e);
         }
-        const params = {
-            TableName: "pac-conference",
-            KeyConditionExpression: "#id = :month",
-            ExpressionAttributeNames: {
-                "#id": "uuid"
-            },
-            ExpressionAttributeValues: {
-                ":month": {
-                    S: "conference-2017-1"
-                }
-            }
-        };
 
-        return new Promise((resolve, reject) => {
-            dynamoDb.query(params, function (err, data) {
-                if (err) {
-                    console.log("ERROR:", err, err.stack());
-                    reject(err);
-                    return;
-                }
-                console.log("SUCCESS:", data);
-                const conferences = data.Items.map(item => ({
-                    name: item.name.S,
-                    from: new Date(Number.parseInt(item.from.N)),
-                    to: new Date(Number.parseInt(item.to.N)),
-                    topics: item.topics.L.map(topic => topic.S),
-                }));
-                console.log("INFO: conferences", conferences);
-                resolve(conferences);
-            });
-        });
+        return getConferences(month);
     }
 
     validate(month) {

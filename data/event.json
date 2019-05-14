@@ -1,4 +1,4 @@
 {
-    "identifier": "getConferences",
-    "month": "2017-01"
+    "identifier": "getConferencesByYear",
+    "year": 2020
 }
