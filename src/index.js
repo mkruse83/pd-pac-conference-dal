@@ -5,8 +5,8 @@ const ConferenceHandler = require("./handler/GetConferencesHandler");
 const ConferenceByYearHandler = require("./handler/GetConferencesByYearHandler");
 
 const flatMap = (f, arr) => arr.reduce((x, y) => [...x, ...f(y)], []);
-Array.prototype.flatMap = function(f) {
-    return flatMap(f,this)
+Array.prototype.flatMap = function (f) {
+    return flatMap(f, this)
 };
 
 exports.handler = async (event, context) => {
@@ -38,7 +38,8 @@ exports.handler = async (event, context) => {
                 status: 500,
                 payload: e.message
             }));
+    } else {
+        console.log("WARNING:", "could not handle");
     }
-    console.log("WARNING:", "could not handle");
     return result;
 };
