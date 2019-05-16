@@ -2,22 +2,27 @@ const dynamoDb = require("./dynamoDB");
 
 const cache = {};
 
-module.exports = (yearAndMonth) => {
+module.exports = (id, sortkey) => {
+    const cacheKey = id + '|' + sortkey;
     // cache of three minutes
-    if (cache[yearAndMonth] && new Date().getTime() - cache[yearAndMonth].date.getTime() < 180000) {
-        console.log("INFO: cache hit for ", yearAndMonth);
-        return Promise.resolve(cache[yearAndMonth].data);
+    if (cache[cacheKey] && new Date().getTime() - cache[cacheKey].date.getTime() < 180000) {
+        console.log("INFO: cache hit for ", cacheKey);
+        return Promise.resolve(cache[cacheKey].data);
     }
 
     const params = {
         TableName: "pac-conference",
-        KeyConditionExpression: "#id = :month",
+        KeyConditionExpression: "#uuid = :uuid AND #sortkey = :sortkey",
         ExpressionAttributeNames: {
-            "#id": "uuid"
+            "#uuid": "uuid",
+            "#sortkey": "sortkey",
         },
         ExpressionAttributeValues: {
-            ":month": {
-                S: "conference-" + yearAndMonth
+            ":uuid": {
+                S: id
+            },
+            ":sortkey": {
+                S: sortkey
             }
         }
     };
@@ -27,6 +32,11 @@ module.exports = (yearAndMonth) => {
             if (err) {
                 console.log("ERROR:", err, err.stack);
                 reject(err);
+                return;
+            }
+            if (data.Items.length > 1) {
+                console.log("ERROR:", "incorrect count", data)
+                reject();
                 return;
             }
             console.log("SUCCESS:", data);
@@ -56,12 +66,12 @@ module.exports = (yearAndMonth) => {
                     topics: talk.M.topics.L.map(topic => topic.S),
                 }))
             }));
-            cache[yearAndMonth] = {
+            cache[cacheKey] = {
                 date: new Date(),
-                data: conferences,
+                data: conferences[0],
             };
-            console.log("INFO: conferences", conferences);
-            resolve(conferences);
+            console.log("INFO: conference", conferences[0]);
+            resolve(conferences[0]);
         });
     });
 };

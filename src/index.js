@@ -3,6 +3,7 @@ require("aws-xray-sdk");
 const AddConferenceHandler = require("./handler/AddConferenceHandler");
 const ConferenceHandler = require("./handler/GetConferencesHandler");
 const ConferenceByYearHandler = require("./handler/GetConferencesByYearHandler");
+const ConferenceById= require("./handler/GetConferenceById");
 
 const flatMap = (f, arr) => arr.reduce((x, y) => [...x, ...f(y)], []);
 Array.prototype.flatMap = function (f) {
@@ -19,6 +20,7 @@ exports.handler = async (event, context) => {
 
     const handlers = [
         new AddConferenceHandler(),
+        new ConferenceById(),
         new ConferenceByYearHandler(),
         new ConferenceHandler(),
     ];
