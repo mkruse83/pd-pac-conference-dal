@@ -12,37 +12,27 @@ module.exports = (id, sortkey) => {
 
     const params = {
         TableName: "pac-conference",
-        KeyConditionExpression: "#uuid = :uuid AND #sortkey = :sortkey",
-        ExpressionAttributeNames: {
-            "#uuid": "uuid",
-            "#sortkey": "sortkey",
-        },
-        ExpressionAttributeValues: {
-            ":uuid": id,
-            ":sortkey": sortkey
+        Key: {
+            uuid: id,
+            sortkey: sortkey,
         }
     };
 
     return new Promise((resolve, reject) => {
-        dynamoDb.query(params, function (err, data) {
+        dynamoDb.get(params, function (err, data) {
             if (err) {
                 console.log("ERROR:", err, err.stack);
                 reject(err);
                 return;
             }
             console.log("SUCCESS:", data);
-            const conferences = data.Items;
-            if (conferences.length > 1) {
-                console.log("ERROR:", "incorrect count", conferences);
-                reject();
-                return;
-            }
+            const conference = data.Item;
             cache[cacheKey] = {
                 date: new Date(),
-                data: conferences[0],
+                data: conference,
             };
-            console.log("INFO: conference", conferences[0]);
-            resolve(conferences[0]);
+            console.log("INFO: conference", conference);
+            resolve(conference);
         });
     });
 };
