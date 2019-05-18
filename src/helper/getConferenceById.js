@@ -1,3 +1,7 @@
+const {
+    ID,
+    SORT,
+} = require("../helper/fields");
 const dynamoDb = require("./dynamoDB");
 
 const cache = {};
@@ -13,8 +17,8 @@ module.exports = (id, sortkey) => {
     const params = {
         TableName: "pac-conference",
         Key: {
-            uuid: id,
-            sortkey: sortkey,
+            [ID]: id,
+            [SORT]: sortkey,
         }
     };
 
