@@ -1,7 +1,6 @@
 require("aws-xray-sdk");
 
 const AddConferenceHandler = require("./handler/AddConferenceHandler");
-const ConferenceHandler = require("./handler/GetConferencesHandler");
 const ConferenceByYearHandler = require("./handler/GetConferencesByYearHandler");
 const ConferenceById= require("./handler/GetConferenceById");
 
@@ -22,7 +21,6 @@ exports.handler = async (event, context) => {
         new AddConferenceHandler(),
         new ConferenceById(),
         new ConferenceByYearHandler(),
-        new ConferenceHandler(),
     ];
 
 

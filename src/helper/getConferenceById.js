@@ -18,12 +18,8 @@ module.exports = (id, sortkey) => {
             "#sortkey": "sortkey",
         },
         ExpressionAttributeValues: {
-            ":uuid": {
-                S: id
-            },
-            ":sortkey": {
-                S: sortkey
-            }
+            ":uuid": id,
+            ":sortkey": sortkey
         }
     };
 
@@ -34,38 +30,13 @@ module.exports = (id, sortkey) => {
                 reject(err);
                 return;
             }
-            if (data.Items.length > 1) {
-                console.log("ERROR:", "incorrect count", data)
+            console.log("SUCCESS:", data);
+            const conferences = data.Items;
+            if (conferences.length > 1) {
+                console.log("ERROR:", "incorrect count", conferences);
                 reject();
                 return;
             }
-            console.log("SUCCESS:", data);
-            const conferences = data.Items.map(item => ({
-                id: item.uuid.S + "|" + item.sortkey.S,
-                name: item.name.S,
-                from: new Date(Number.parseInt(item.from.N)),
-                to: new Date(Number.parseInt(item.to.N)),
-                topics: item.topics.L.map(topic => topic.S),
-                location: {
-                    name: item.location.M.name.S,
-                    address: item.location.M.address.S,
-                },
-                talks: item.talks.L.map((talk) => ({
-                    from: new Date(Number.parseInt(talk.M.from.N)),
-                    to: new Date(Number.parseInt(talk.M.to.N)),
-                    name: talk.M.name.S,
-                    room: {
-                        name: talk.M.room.M.name.S,
-                        nameInLocation: talk.M.room.M.nameInLocation.S,
-                    },
-                    speaker: {
-                        company: talk.M.speaker.M.company.S,
-                        name: talk.M.speaker.M.name.S,
-                        title: talk.M.speaker.M.title.S,
-                    },
-                    topics: talk.M.topics.L.map(topic => topic.S),
-                }))
-            }));
             cache[cacheKey] = {
                 date: new Date(),
                 data: conferences[0],

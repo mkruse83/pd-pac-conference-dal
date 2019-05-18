@@ -1,5 +1,4 @@
 {
-    "identifier": "getConferenceById",
-    "id": "conference-2019-2",
-    "sortkey": "1553331600000#Javaland"
+    "identifier": "getConferencesByYear",
+    "year": 2019
 }
