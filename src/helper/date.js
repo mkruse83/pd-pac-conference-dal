@@ -1,4 +1,6 @@
 module.exports = {
-    formatToYearAndMonth: (date) =>
-        date.getFullYear() + "-" + date.getUTCMonth()
+    formatToYearAndMonth: (date) => {
+        const d = new Date(date);
+        return d.getFullYear() + "-" + (d.getUTCMonth() + 1)
+    }
 };

@@ -1,3 +1,7 @@
+const {
+    ID,
+    SORT,
+} = require("../helper/fields");
 const dynamoDb = require("./dynamoDB");
 
 const cache = {};
@@ -11,13 +15,22 @@ module.exports = (yearAndMonth) => {
 
     const params = {
         TableName: "pac-conference",
-        KeyConditionExpression: "#id = :month",
+        KeyConditionExpression: "#id = :id",
         ExpressionAttributeNames: {
-            "#id": "uuid"
+            "#id": ID,
+            "#sortkey": SORT,
+            "#name": "name",
+            "#from": "from",
+            "#to": "to",
+            "#topics": "topics",
+            "#location": "location",
         },
         ExpressionAttributeValues: {
-            ":month": "conference-" + yearAndMonth,
-        }
+            ":id": "conference#" + yearAndMonth,
+        },
+        Select: "SPECIFIC_ATTRIBUTES",
+        ProjectionExpression: "#id, #sortkey, #from, #to, #name, #topics, #location"
+
     };
 
     return new Promise((resolve, reject) => {

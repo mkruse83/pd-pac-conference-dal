@@ -2,7 +2,8 @@ require("aws-xray-sdk");
 
 const AddConferenceHandler = require("./handler/AddConferenceHandler");
 const ConferenceByYearHandler = require("./handler/GetConferencesByYearHandler");
-const ConferenceById= require("./handler/GetConferenceById");
+const ConferenceById = require("./handler/GetConferenceById");
+const AddTalkHandler = require("./handler/AddTalkHandler");
 
 const flatMap = (f, arr) => arr.reduce((x, y) => [...x, ...f(y)], []);
 Array.prototype.flatMap = function (f) {
@@ -21,6 +22,7 @@ exports.handler = async (event, context) => {
         new AddConferenceHandler(),
         new ConferenceById(),
         new ConferenceByYearHandler(),
+        new AddTalkHandler(),
     ];
 
 
@@ -30,14 +32,18 @@ exports.handler = async (event, context) => {
         payload: "Unknown error occured."
     });
     if (foundHandler) {
-        result = foundHandler.handle(event, context)
-            .then(data => ({
+        try {
+            const data = await foundHandler.handle(event, context);
+            result = {
                 status: 200,
                 payload: data,
-            })).catch(e => ({
+            }
+        } catch (e) {
+            result = {
                 status: 500,
                 payload: e.message
-            }));
+            }
+        }
     } else {
         console.log("WARNING:", "could not handle");
     }

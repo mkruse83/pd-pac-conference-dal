@@ -1,4 +1,4 @@
 module.exports = {
-    ID: "uuid",
+    ID: "partkey",
     SORT: "sortkey",
 };

@@ -20,19 +20,50 @@ class AddConferenceHandler {
         }
 
         const conf = this.parse(event.conference);
+
+        const talks = conf.talks.map((talk) => ({
+            ...talk,
+            [ID]: "talk#" + formatToYearAndMonth(talk.from),
+            [SORT]: new Date(talk.from).getTime() + "#" + conf.name + "#" + talk.room.nameInLocation,
+        }));
+        const op = {
+            [ID]: "op",
+            [SORT]: new Date().getTime() + "#" + new Date(conf.from).getTime() + "#" + conf.name,
+            op: "addTalk",
+            talks
+        };
         const conference = {
+            [ID]: "conference#" + formatToYearAndMonth(conf.from),
+            [SORT]: new Date(conf.from).getTime() + "#" + conf.name,
             ...conf,
-            [ID]: "conference-" + formatToYearAndMonth(conf.from),
-            [SORT]: conf.from.getTime() + "#" + conf.name,
         };
 
 
         const params = {
-            Item: conference,
-            TableName: "pac-conference",
+            TransactItems: [
+                {
+                    Put: {
+                        Item: conference,
+                        TableName: "pac-conference",
+                    }
+                },
+                {
+                    Put: {
+                        Item: op,
+                        TableName: "pac-conference-ops",
+                    }
+                }
+            ]
         };
         return new Promise((resolve, reject) => {
-            dynamoDb.put(params, function (err, data) {
+            // const request = dynamoDb.transactWrite(params)
+            //
+            // request.on('extractError', (resp) => {
+            //     console.log(resp.httpResponse.body.toString());
+            // });
+            //
+            // request.send()
+            dynamoDb.transactWrite(params, function (err, data) {
                 if (err) {
                     console.log("ERROR:", err, err.stack);
                     reject(err);
@@ -47,8 +78,8 @@ class AddConferenceHandler {
     parse({name, from, to, topics, talks, location}) {
         return {
             name,
-            from: new Date(from),
-            to: new Date(to),
+            from: new Date(from).getTime(),
+            to: new Date(to).getTime(),
             topics,
             location,
             talks: this._parseTalks(talks),
@@ -79,8 +110,8 @@ class AddConferenceHandler {
 
     _parseTalk({from, to, name, room, speaker, topics}) {
         return {
-            from: new Date(from),
-            to: new Date(to),
+            from: new Date(from).getTime(),
+            to: new Date(to).getTime(),
             name,
             room,
             speaker,
