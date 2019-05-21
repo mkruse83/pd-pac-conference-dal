@@ -1,0 +1,22 @@
+{
+    "identifier": "addTalkToConference",
+    "id": "conference#2020-3",
+    "sortkey": "1584954000000#Javaland",
+    "talk": {
+        "name": "aaaa",
+        "from": "2020-03-25T09:00:00.000Z",
+        "to": "2020-03-25T11:00:00.000Z",
+        "room": {
+            "name": "Berlin",
+            "nameInLocation": "56 OG Rechts"
+        },
+        "topics": [
+            "aaaa"
+        ],
+        "speaker": {
+            "name": "aaaa",
+            "company": "a",
+            "title": "a"
+        }
+    }
+}

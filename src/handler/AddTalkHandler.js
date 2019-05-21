@@ -14,13 +14,13 @@ class AddTalkHandler {
     }
 
     async handle(event) {
-        const id = event.id;
-        const sortkey = event.sortkey;
         try {
-            this.validate(id, sortkey);
+            this.validate(event);
         } catch (e) {
             return Promise.reject(e);
         }
+        const id = event.id;
+        const sortkey = event.sortkey;
 
         const talk  = {
           ...event.talk,
@@ -81,7 +81,7 @@ class AddTalkHandler {
         });
     }
 
-    validate(id, sortkey) {
+    validate({id, sortkey}) {
         if (!id || typeof id !== "string") {
             throw new Error("FIELD INVALID: id");
         }

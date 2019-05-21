@@ -2,54 +2,50 @@ const {
     ID,
     SORT,
 } = require("../helper/fields");
-const {ADD_CONFERENCE} = require("../helper/methods");
+const {DELETE_TALK} = require("../helper/methods");
 const {formatToYearAndMonth} = require("../helper/date");
 const dynamoDb = require("../helper/dynamoDB");
+const getConferenceById = require("../helper/getConferenceById");
 
-class AddConferenceHandler {
+class DeleteTalkFromConferenceHandler {
 
     canHandle(event) {
-        return event.identifier === ADD_CONFERENCE;
+        return event.identifier === DELETE_TALK;
     }
 
-    handle(event) {
+    async handle(event) {
         try {
-            this.validate(event.conference);
+            this.validate(event);
         } catch (e) {
             return Promise.reject(e);
         }
 
-        const conf = this.parse(event.conference);
+        const id = event.id;
+        const sortkey = event.sortkey;
+        const talkToDelete = this.parse(event.talk);
 
-        const talks = conf.talks.map((talk) => ({
-            ...talk,
-            [ID]: "talk#" + formatToYearAndMonth(talk.from),
-            [SORT]: new Date(talk.from).getTime() + "#" + conf.name + "#" + talk.room.nameInLocation,
-        }));
-        const op = {
-            [ID]: "op",
-            [SORT]: new Date().getTime() + "#" + new Date(conf.from).getTime() + "#" + conf.name,
-            op: "addTalk",
-            talks
-        };
-        const conference = {
-            [ID]: "conference#" + formatToYearAndMonth(conf.from),
-            [SORT]: new Date(conf.from).getTime() + "#" + conf.name,
-            ...conf,
-        };
+        const conf = await getConferenceById(id, sortkey);
+        const talkInConference = conf.talks.filter(talk => talk.from === talkToDelete.from && talk.room.nameInLocation === talkToDelete.room.nameInLocation)[0];
+        talkInConference.name = null;
+        talkInConference.speaker = null;
+        talkInConference.topics = null;
 
+        const deleteItem = {
+            [ID]: "talk#" + formatToYearAndMonth(talkInConference.from),
+            [SORT]:new Date(talkInConference.from).getTime() + "#" + conf.name + "#" + talkInConference.room.nameInLocation,
+        };
 
         const params = {
             TransactItems: [
                 {
                     Put: {
-                        Item: conference,
+                        Item: conf,
                         TableName: "pac-conference",
                     }
                 },
                 {
-                    Put: {
-                        Item: op,
+                    Delete: {
+                        Key: deleteItem,
                         TableName: "pac-conference-ops",
                     }
                 }
@@ -68,40 +64,7 @@ class AddConferenceHandler {
         });
     }
 
-    parse({name, from, to, topics, talks, location}) {
-        return {
-            name,
-            from: new Date(from).getTime(),
-            to: new Date(to).getTime(),
-            topics,
-            location,
-            talks: this._parseTalks(talks),
-        }
-    }
-
-    validate({name, from, to, topics, talks}) {
-        if (!name || typeof name !== "string") {
-            throw new Error("FIELD INVALID: conference name");
-        }
-        if (!from) {
-            throw new Error("FIELD INVALID: conference from");
-        }
-        if (!to) {
-            throw new Error("FIELD INVALID: conference to");
-        }
-        if (!topics || !Array.isArray(topics) || topics.length === 0) {
-            throw new Error("FIELD INVALID: conference topics");
-        }
-        if (talks) {
-            talks.forEach(talk => this._validateTalk(talk))
-        }
-    }
-
-    _parseTalks(talks) {
-        return talks.map(talk => this._parseTalk(talk));
-    }
-
-    _parseTalk({from, to, name, room, speaker, topics}) {
+    parse({from, to, name, room, speaker, topics}) {
         return {
             from: new Date(from).getTime(),
             to: new Date(to).getTime(),
@@ -110,6 +73,19 @@ class AddConferenceHandler {
             speaker,
             topics,
         }
+    }
+
+    validate({id, sortkey, talk}) {
+        if (!id) {
+            throw new Error("FIELD INVALID: id");
+        }
+        if (!sortkey) {
+            throw new Error("FIELD INVALID: sortkey");
+        }
+        if (!talk) {
+            throw new Error("FIELD INVALID: talk");
+        }
+        this._validateTalk(talk);
     }
 
     _validateTalk({from, to, name, room, speaker, topics}) {
@@ -151,4 +127,4 @@ class AddConferenceHandler {
     }
 }
 
-module.exports = AddConferenceHandler;
+module.exports = DeleteTalkFromConferenceHandler;

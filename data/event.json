@@ -1,5 +1,23 @@
 {
-    "identifier": "getConferenceById",
-    "id": "conference-2019-2",
-    "sortkey": "1553331600000#Javaland"
+  "identifier": "deleteTalkFromConference",
+  "id": "conference#2020-3",
+  "sortkey": "1584954000000#Javaland",
+  "talk": {
+    "id": "",
+    "name": "tttt",
+    "from": "2020-03-23T11:00:00.000Z",
+    "to": "2020-03-23T11:00:00.000Z",
+    "room": {
+      "name": "Room B",
+      "nameInLocation": "2.02"
+    },
+    "topics": [
+      "tttt"
+    ],
+    "speaker": {
+      "name": "tttt",
+      "company": "tttt",
+      "title": "tttt"
+    }
+  }
 }

@@ -4,6 +4,7 @@ const AddConferenceHandler = require("./handler/AddConferenceHandler");
 const ConferenceByYearHandler = require("./handler/GetConferencesByYearHandler");
 const ConferenceById = require("./handler/GetConferenceById");
 const AddTalkHandler = require("./handler/AddTalkHandler");
+const DeleteTalkFromConferenceHandler = require("./handler/DeleteTalkFromConferenceHandler");
 
 const flatMap = (f, arr) => arr.reduce((x, y) => [...x, ...f(y)], []);
 Array.prototype.flatMap = function (f) {
@@ -23,24 +24,26 @@ exports.handler = async (event, context) => {
         new ConferenceById(),
         new ConferenceByYearHandler(),
         new AddTalkHandler(),
+        new DeleteTalkFromConferenceHandler(),
     ];
 
 
     const foundHandler = handlers.find(handler => handler.canHandle(event, context));
     let result = Promise.resolve({
-        status: 400,
+        statusCode: 400,
         payload: "Unknown error occured."
     });
     if (foundHandler) {
         try {
             const data = await foundHandler.handle(event, context);
             result = {
-                status: 200,
+                statusCode: 200,
                 payload: data,
             }
         } catch (e) {
+            console.log("ERROR: ", e);
             result = {
-                status: 500,
+                statusCode: 500,
                 payload: e.message
             }
         }
