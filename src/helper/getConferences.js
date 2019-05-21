@@ -1,6 +1,7 @@
 const {
     ID,
     SORT,
+    TOPICS,
 } = require("../helper/fields");
 const dynamoDb = require("./dynamoDB");
 
@@ -22,7 +23,7 @@ module.exports = (yearAndMonth) => {
             "#name": "name",
             "#from": "from",
             "#to": "to",
-            "#topics": "topics",
+            "#topics": TOPICS,
             "#location": "location",
         },
         ExpressionAttributeValues: {

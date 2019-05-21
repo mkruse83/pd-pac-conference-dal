@@ -5,6 +5,8 @@ const ConferenceByYearHandler = require("./handler/GetConferencesByYearHandler")
 const ConferenceById = require("./handler/GetConferenceById");
 const AddTalkHandler = require("./handler/AddTalkHandler");
 const DeleteTalkFromConferenceHandler = require("./handler/DeleteTalkFromConferenceHandler");
+const GetTopicsByMonthHandler = require("./handler/GetTopicsByMonth");
+const GetTalksByTopicHandler = require("./handler/GetTalksByTopic");
 
 const flatMap = (f, arr) => arr.reduce((x, y) => [...x, ...f(y)], []);
 Array.prototype.flatMap = function (f) {
@@ -25,6 +27,8 @@ exports.handler = async (event, context) => {
         new ConferenceByYearHandler(),
         new AddTalkHandler(),
         new DeleteTalkFromConferenceHandler(),
+        new GetTopicsByMonthHandler(),
+        new GetTalksByTopicHandler(),
     ];
 
 
