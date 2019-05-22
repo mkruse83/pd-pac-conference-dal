@@ -7,6 +7,8 @@ const AddTalkHandler = require("./handler/AddTalkHandler");
 const DeleteTalkFromConferenceHandler = require("./handler/DeleteTalkFromConferenceHandler");
 const GetTopicsByMonthHandler = require("./handler/GetTopicsByMonth");
 const GetTalksByTopicHandler = require("./handler/GetTalksByTopic");
+const GetFavoritesHandler = require("./handler/GetFavorites");
+const ToggleFavoriteHandler = require("./handler/ToggleFavorite");
 
 const flatMap = (f, arr) => arr.reduce((x, y) => [...x, ...f(y)], []);
 Array.prototype.flatMap = function (f) {
@@ -29,6 +31,8 @@ exports.handler = async (event, context) => {
         new DeleteTalkFromConferenceHandler(),
         new GetTopicsByMonthHandler(),
         new GetTalksByTopicHandler(),
+        new GetFavoritesHandler(),
+        new ToggleFavoriteHandler(),
     ];
 
 

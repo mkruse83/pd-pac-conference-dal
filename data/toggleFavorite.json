@@ -1,0 +1,7 @@
+{
+  "identifier": "toggleFavorite",
+  "id": "conference#2020-3",
+  "sortkey": "1584954000000#Javaland",
+  "userId": "amzn1.account.AFIIZOEOZGTRJGTWTAHKXAD5T5LA",
+  "talk": "{\n    \"name\": \"PWA - Cachinghölle\",\n    \"from\": \"2020-03-23T09:00:00.000Z\",\n    \"to\": \"2020-03-23T11:00:00.000Z\",\n    \"room\": {\n        \"name\": \"Room B\",\n        \"nameInLocation\": \"2.02\"\n    },\n    \"topics\": [\n        \"SA\"\n    ],\n    \"speaker\": {\n        \"name\": \"Hans Wurst\",\n        \"company\": \"PRODYNA SE\",\n        \"title\": \"Mr.\"\n    }\n}"
+}
